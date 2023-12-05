@@ -15,9 +15,9 @@ class Predictor(BasePredictor):
 
     def predict(
         self,
-        input_video: Path = Input(description="Input video. Must be .mp4, currently"),
+        input_video: Path = Input(description="Input video"),
         frames_offset: int = Input(
-            description="Factor to scale image by", default=2
+            description="Frames to offset video by for motion extraction. Don't see any motion? Try increasing the number of frames.", default=2
         ),
     ) -> Path:
         """Run a single prediction on the model"""
