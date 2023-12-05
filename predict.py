@@ -21,18 +21,29 @@ class Predictor(BasePredictor):
             description="Frames to offset video by for motion extraction. Don't see any motion? Try increasing the number of frames.",
             default=2,
         ),
+        fixed_mode: bool = Input(
+            description="Enable fixed mode. Will ignore frames_offset, and use comparison_frame instead",
+            default=False,
+        ),
+        comparison_frame: int = Input(
+            description="Frame number to compare to for fixed_mode. Note that this is 1-indexed, so the first frame is 1, not 0.",
+            default=1,
+        ),
         color_delay_mode: bool = Input(
-            description="Enable color delay mode. Will ignore frames_offset, and use red_offset, green_offset, and blue_offset instead",
+            description="Enable color delay mode. Will ignore frames_offset and comparison_frame, and use red_offset, green_offset, and blue_offset instead",
             default=False,
         ),
         red_offset: int = Input(
-            description="Number of frames to delay red channel", default=0
+            description="Number of frames to delay red channel for color_delay_mode",
+            default=0,
         ),
         green_offset: int = Input(
-            description="Number of frames to delay green channel", default=5
+            description="Number of frames to delay green channel for color_delay_mode",
+            default=5,
         ),
         blue_offset: int = Input(
-            description="Number of frames to delay blue channel", default=10
+            description="Number of frames to delay blue channel for color_delay_mode",
+            default=10,
         ),
     ) -> Path:
         """Run a single prediction on the model"""
@@ -53,6 +64,15 @@ class Predictor(BasePredictor):
                     str(red_offset),
                     str(green_offset),
                     str(blue_offset),
+                    out_path,
+                ]
+            )
+        elif fixed_mode:
+            subprocess.run(
+                [
+                    "./motionextractorfixed.sh",
+                    in_path,
+                    str(comparison_frame),
                     out_path,
                 ]
             )
