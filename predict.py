@@ -21,7 +21,10 @@ class Predictor(BasePredictor):
             description="Frames to offset video by for motion extraction. Don't see any motion? Try increasing the number of frames.",
             default=2,
         ),
-        color_delay: str = Input(description="Number of frames to delay red, green and blue channels, respectively. Artistic option.", default="0,0,0"),
+        color_delay_mode: bool = Input(description="Enable color delay mode. Will ignore frames_offset, and use red_offset, green_offset, and blue_offset instead", default=False),
+        red_offset: int = Input(description="Number of frames to delay red channel", default=0),
+        green_offset: int = Input(description="Number of frames to delay green channel", default=5),
+        blue_offset: int = Input(description="Number of frames to delay blue channel", default=10),
     ) -> Path:
         """Run a single prediction on the model"""
         # Remove for safety
@@ -33,12 +36,10 @@ class Predictor(BasePredictor):
         out_filename = "output" + extension
         out_path = os.path.join(temp_dir, out_filename)
         shutil.copyfile(input_video, in_path)
-        subprocess.run(["./motionextractor.sh", in_path, str(frames_offset), out_path])
-
-        if color_delay != "0,0,0":
-            tmp_video_path = os.path.join(temp_dir, "tmp" + extension)
-            subprocess.run(["./colordelay.sh", out_path, *[n.strip() for n in color_delay.split(',')], tmp_video_path])
-            shutil.move(tmp_video_path, out_path)
+        if color_delay_mode:
+            subprocess.run(["./colordelay.sh", in_path, str(red_offset), str(green_offset), str(blue_offset), out_path])
+        else:
+            subprocess.run(["./motionextractor.sh", in_path, str(frames_offset), out_path])
         # Remove for safety
         if os.path.exists(out_filename):
             os.remove(out_filename)
