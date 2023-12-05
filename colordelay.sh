@@ -12,7 +12,8 @@ blue_frames_offset=${4:-2}
 target_video=${5:-output.mp4}
 
 temp_dir=$(mktemp -d)
-# make grayscale
+
+# make input grayscale
 ffmpeg -i $input_video -vf "format=gray" $temp_dir/grayscale.mp4
 
 # split RGB channels into 3 separate grayscale videos
