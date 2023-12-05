@@ -1,11 +1,12 @@
 # Prediction interface for Cog ⚙️
 # https://github.com/replicate/cog/blob/main/docs/python.md
 
-from cog import BasePredictor, Input, Path
-import subprocess
-import shutil
 import os
+import shutil
+import subprocess
 import tempfile
+
+from cog import BasePredictor, Input, Path
 
 
 class Predictor(BasePredictor):
@@ -17,7 +18,8 @@ class Predictor(BasePredictor):
         self,
         input_video: Path = Input(description="Input video"),
         frames_offset: int = Input(
-            description="Frames to offset video by for motion extraction. Don't see any motion? Try increasing the number of frames.", default=2
+            description="Frames to offset video by for motion extraction. Don't see any motion? Try increasing the number of frames.",
+            default=2,
         ),
     ) -> Path:
         """Run a single prediction on the model"""
